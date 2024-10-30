@@ -1,4 +1,4 @@
-Памятка по синтаксису `JavaScript` для [node.js](https://github.com/nodejs/node) в примерах.
+Памятка по синтаксису `JavaScript` для [Node.js](https://github.com/nodejs/node) в примерах.
 
 - [Переменные](#переменные)
 - [Типы данных](#типы-данных)
@@ -11,7 +11,9 @@
 - [Асинхронные операции](#асинхронные-операции)
 - [Регулярные выражения](#регулярные-выражения)
 - [Math](#math)
-
+- [Express](#express)
+- [Axios](#axios)
+- [Cheerio](#cheerio)
 
 ### Переменные
 
@@ -713,4 +715,250 @@ Math.sqrt(16)          // Квадратный корень: 4
 Math.cbrt(27)          // Кубический корень: 3
 Math.imul(2, 4)        // Целочисленное 32-битное умножение: 8
 Math.clz32(1)          // Количество ведущих нулей в 32-битном представлении: 31
+```
+
+### Express
+
+Создаем директорию, инициализируем проект и устанавливаем зависимости
+
+```shell
+mkdir api && cd api
+npm init -y
+npm install express
+```
+
+Серверная часть `API` сервера в файле `server.js`
+
+```js
+const express = require('express')
+
+const web = express()
+
+// Middleware для парсинга JSON данных в теле запроса
+web.use(express.json())
+
+// Обработка GET запроса с параметрами в пути и заголовками
+web.get('/user/:id', (req, res) => {
+    const userId = req.params.id // Получаем параметр id из пути
+    const customHeader = req.headers['custom-header'] // Чтение заголовка custom-header
+    res.json({
+        message: `GET запрос для пользователя с ID ${userId}`,
+        customHeader: customHeader || 'Заголовок отсутствует'
+    })
+})
+
+// Обработка POST запроса с данными в теле запроса и заголовками
+web.post('/user', (req, res) => {
+    const { name, age } = req.body // Получаем данные из тела POST запроса
+    const authHeader = req.headers['authorization'] // Чтение содержимого из заголовка `authorization`
+    if (authHeader !== 'Bearer TOKEN') {
+        res.json({
+            message: `Авторизация не пройдена, переданный токен: ${authHeader}`
+        })
+    } else {
+        res.json({
+            name: name || 'Не указано',
+            age: age || 'Не указано',
+        })
+    }
+})
+
+// Запуск сервера на порту 3000
+const PORT = 3000
+web.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`)
+})
+```
+
+Запуск сервера
+
+```shell
+node server.js
+```
+
+### Axios
+
+Клиентская часть для работы с `API`
+
+```shell
+npm install axios
+```
+
+Пример `GET` запроса
+
+```js
+const axios = require('axios')
+
+// URL сервера
+const url = 'http://localhost:3000'
+
+// Пример GET запроса с параметром id в пути и кастомным заголовком
+async function getUser(userId, Header) {
+    try {
+        const response = await axios.get(`${url}/user/${userId}`, {
+            headers: {
+                'custom-header': Header
+            }
+        })
+        console.log('GET Ответ:', response.data)
+    } catch (error) {
+        console.error('Ошибка GET запроса:', error.message)
+    }
+}
+
+await getUser(1, 'Value')
+// GET Ответ: {
+//   message: 'GET запрос для пользователя с ID 1',
+//   customHeader: 'Value'
+// }
+```
+
+Пример `POST` запроса
+
+```js
+// Пример POST запроса с телом и заголовком авторизации
+async function createUser(key, name, age) {
+    try {
+        const response = await axios.post(`${url}/user`, {
+            name: name,
+            age: age
+        }, {
+            headers: {
+                'Authorization': `Bearer ${key}`
+            }
+        })
+        console.log('POST Ответ:', response.data)
+    } catch (error) {
+        console.error('Ошибка POST запроса:', error.message)
+    }
+}
+
+await createUser('KEY', 'Alex', 29)
+// POST Ответ: { message: 'Авторизация не пройдена, переданный токен: Bearer KEY' }
+
+await createUser('TOKEN', 'Alex', 29)
+// POST Ответ: { name: 'Alex', age: 29 }
+```
+
+### Cheerio
+
+Cheerio - это библиотека для работы с `HTML` и `XML` в `Node.js`
+
+```shell
+npm install axios cheerio https-proxy-agent iconv-lite
+```
+
+Подключаем библиотеки и получаем содержимое страницы с помощью `Axios` через `Proxy`
+
+```js
+const axios    = require('axios')
+const cheerio  = require('cheerio')
+const proxy    = require('https-proxy-agent')
+const iconv    = require('iconv-lite')
+
+// Имя агента в заголовке запросов (вместо axios)
+const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0 Win64 x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+}
+
+const proxyAddress = '192.168.3.100'
+const proxyPort = 9090
+const username = 'test'
+const password = 'test'
+
+// Создание экземпляра Axios с использованием конфигурации Proxy
+const createAxiosProxy = () => {
+    const config = {}
+    config.httpsAgent = new proxy.HttpsProxyAgent(`http://${username}:${password}@${proxyAddress}:${proxyPort}`)
+    return axios.create(config)
+}
+const axiosProxy = createAxiosProxy()
+
+const url = "https://rutor.info"
+
+// Отправляем запрос
+const response = await axiosProxy.get(url, {
+    responseType: 'arraybuffer',
+    headers: headers
+})
+
+// Декодируем ответ
+html = iconv.decode(response.data, 'utf8')
+```
+
+Вытаскиваем данные с помощью `Cheerio`
+
+```js
+const data = cheerio.load(html)
+
+// Обращаемся к элементу div (не обязательно указывать название элемента) с id="ws" > div с id="index" > элемент "tbody" (таблица) > элемент "tr" (строки)
+data('div#ws #index tbody tr').length // 171
+// Исключить из вывода строку с class="backgr" (загловки столбцов)
+data('#ws #index tbody tr').not('.backgr').length // 170
+
+// Получить содержимое первого элемента "tr" в формате HTML, строки или текста без тегов
+data('#ws #index tbody tr').not('.backgr').eq(0).html()
+data('#ws #index tbody tr').not('.backgr').eq(0).toString()
+data('#ws #index tbody tr').not('.backgr').eq(0).text()
+
+// Получить содержимое элемента по частичному совпадению
+data('#ws #index tbody tr').not('.backgr').find('td:contains("слово")').text().replace('\n','').trim()
+// 'Мужское слово (2024) WEB-DLRip'
+
+// Получить содержимое второго элемента по индексу в строке (столбцe)
+data('#ws #index tbody tr').not('.backgr').eq(0).find('td').eq(1).text().replace('\n','').trim()
+// 'Launcher for Zapret [v 1.3] (2024) PC | Portable'
+
+// Получить содержимое атрибута "href" из элемента с классом "downgif"
+data('#ws #index tbody tr').not('.backgr').eq(0).find('td a.downgif').attr('href')
+// '//d.rutor.info/download/1008549'
+
+// Получить содержимое атрибута "href" из второго элемента "a" в элементе "td"
+data('#ws #index tbody tr').not('.backgr').eq(0).find('td a:nth-child(2)').attr('href')
+// 'magnet:?xt=urn:btih:f1ca88b9421b243b6cb3d4da90e8fe133f381817&dn=rutor.info&tr=udp://opentor.net:6969&tr=http://retracker.local/announce'
+
+// Фильтруем все элементы по частичному совпадению
+data('#ws #index tbody tr').not('.backgr').filter((index, element) => {
+    // Проверяем, содержит ли текущая строка "tr" слово "Крит" в одном из столбцов "td"
+    return data(element).find('td:contains("Крит")').length > 0
+}).map((index, element) => {
+    // Если слово найдено, извлекаем текст всех "td" в этой строке с помощью map()
+    return data(element).find('td').map((index, element) => data(element).text()).get().join(' | ').replace('\n','')
+}).get()
+
+// [
+//   '29 Окт 24 | Критик / The Critic (2023) WEB-DLRip 1080p от ExKinoRay | P  | 6.10 GB |  1  4',
+//   '28 Окт 24 | Критик / The Critic (2023) WEB-DLRip | P  | 1.46 GB |  58  22',
+//   '28 Окт 24 | Критик / The Critic (2023) WEB-DLRip-AVC от DoMiNo & селезень | P  | 1.46 GB |  64  19',
+//   '28 Окт 24 | Критик / The Critic (2023) WEB-DL 1080p | P | RGB  | 1 | 5.63 GB |  115  54'
+// ]
+
+const torrents = []
+
+// Собираем объект из всех элементов
+data('#ws #index tbody tr').not('.backgr').each((index, element) => {
+    const row = data(element)
+    const torrent = {
+        'Date': row.find('td').eq(0).text().trim(),
+        'Name': row.find('td').eq(1).find('a').last().text().trim(),
+        'Link': 'https://rutor.info' + row.find('td').eq(1).find('a[href^="/torrent"]').attr('href'),
+        'DownloadLink': 'https://' + row.find('td').eq(1).find('a.downgif').attr('href'),
+        'Magnet': row.find('td').eq(1).find('a[href^="magnet:"]').attr('href')
+    }
+    torrents.push(torrent)
+})
+
+// Конвертируем объект в формат JSON
+console.log(JSON.stringify(torrents, null, 2))
+
+// [
+//   {
+//     "Date": "29 Окт 24",
+//     "Name": "Launcher for Zapret [v 1.3] (2024) PC | Portable",
+//     "Link": "https://rutor.info/torrent/1008549/launcher-for-zapret-v-1.3-2024-pc-portable",
+//     "DownloadLink": "https:////d.rutor.info/download/1008549",
+//     "Magnet": "magnet:?xt=urn:btih:f1ca88b9421b243b6cb3d4da90e8fe133f381817&dn=rutor.info&tr=udp://opentor.net:6969&tr=http://retracker.local/announce"
+//   },
+//   ...
+// ]
 ```

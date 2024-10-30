@@ -10,13 +10,13 @@
 
 - [JavaScript (Node.js)](node.js.md)
 
-📚 Заметки по синтаксису и командлетам **PowerShell** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
+📚 Большая база заметок по синтаксису и командам **PowerShell** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
 
 ### Backlog
 
 - `Python`
-- `C#`
 - `GoLang`
+- `C#`
 - `Bash`
 - `Groovy`
 - `Dart/Flutter`
