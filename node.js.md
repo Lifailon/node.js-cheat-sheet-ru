@@ -13,7 +13,9 @@
 - [Math](#math)
 - [Express](#express)
 - [Axios](#axios)
+- [Fetch](#fetch)
 - [Cheerio](#cheerio)
+- [Puppeteer](#puppeteer)
 
 ### Переменные
 
@@ -270,6 +272,10 @@ const filterArray = nameArray.filter(item => item.length >= 4) // отфильт
 
 [...nameArray, ...filterArray] // объеденить два массива
 // [ 'red', 'blue', 'green', 'blue', 'green' ]
+
+const idArray = data.map(item => item.id)
+// Метод reduce выполняет функцию для каждого элемента массива, чтобы получить одно итоговое значение (сумму)
+idArray.reduce((accumulator, current) => accumulator + current, 0) // 3
 ```
 
 ### Объекты
@@ -840,6 +846,32 @@ await createUser('TOKEN', 'Alex', 29)
 // POST Ответ: { name: 'Alex', age: 29 }
 ```
 
+### Fetch
+
+```js
+async function fetchData(url) {
+    try {
+        // Отправляем GET-запрос на указанный URL
+        const response = await fetch(url)
+        // Проверяем, что ответ успешен
+        if (!response.ok) {
+            throw new Error(`Error Status: ${response.status}`)
+        }
+        // Получаем и выводим данные в формате JSON
+        const data = await response.json()
+        return data
+    }
+    // Обрабатываем ошибки
+    catch (error) {
+        console.error('Error:', error)
+    }
+}
+
+const result = await fetchData('https://jsonplaceholder.typicode.com/todos/1')
+result // { userId: 1, id: 1, title: 'delectus aut autem', completed: false }
+JSON.stringify(result) // '{"userId":1,"id":1,"title":"delectus aut autem","completed":false}'
+```
+
 ### Cheerio
 
 Cheerio - это библиотека для работы с `HTML` и `XML` в `Node.js`
@@ -961,4 +993,136 @@ console.log(JSON.stringify(torrents, null, 2))
 //   },
 //   ...
 // ]
+```
+
+### Puppeteer
+
+Puppeteer — это библиотека, которая предоставляет `API` для автоматизации любых действий в браузерах **Google Chrome** и **Mozilla Firefox** через протокол `Chrome DevTools` и `WebDriver BiDi`.
+
+```shell
+mkdir api && cd api && npm init -y && npm install puppeteer
+```
+
+Пример получения списка файлов раздачи с сайта [RuTor](https://rutor.info).
+
+```js
+const puppeteer = require('puppeteer')
+// Запускаем браузер и открываем новую пустую страницу 
+const browser = await puppeteer.launch({
+    headless: true // Отключить отображение браузера (параметр по умолчанию)
+})
+const page = await browser.newPage()
+// Открываем страницу с ожиданием загрузки 60 сек
+const query = 721221
+await page.goto(`https://rutor.info/torrent/${query}`, {
+    timeout: 60000,
+    waitUntil: 'domcontentloaded' // ожидать только полной загрузки DOM (не ждать загрузки внешних ресурсов, таких как изображения, стили и скрипты)
+})
+await page.evaluate(() => {
+    // Находим кнопку по JavaScript пути и нажимаем на нее
+    // document.querySelector("#details > tbody > tr:nth-child(11) > td.header > span").click()
+    // document.querySelector("#details > tbody > tr:nth-child(12) > td.header > span").click()
+    // Находим все кпноки которые содержат class="button"
+    const buttons = document.querySelectorAll('span.button')
+    // Проходимся по найденным кнопкам
+    buttons.forEach(button => {
+        // Проверяем, содержит ли кнопка текст "Файлы" и нажимаем на нее
+        if (button.textContent.includes('Файлы')) {
+            button.click()
+        }
+    })
+})
+// Дождаться загрузки результатов
+// const elementHandle = await page.waitForSelector('#files')
+// Ищем элемент с идентификатором #files и проверяем, что элемент существует его содержимое не содержит текст загрузки
+await page.waitForFunction(() => {
+    const element = document.querySelector('#files')
+    return element && !element.textContent.includes("Происходит загрузка списка файлов...")
+}, {
+    timeout: 30000, // Ожидать результат 30 секунд
+    polling: 50   // Проверка каждые 50мс (по умолчанию 100мс)
+})
+// Забираем результат после успешной проверки
+const elementContent = await page.evaluate(() => {
+    const element = document.querySelector('#files')
+    return element ? element.textContent : null
+})
+// Закрываем браузер
+await browser.close()
+// Разбиваем полученные результаты на массив из строк (split) исключая первую строку (slince)
+const lines = elementContent.trim().split('\n').slice(1)
+// Регулярное выражение для разбиения строки на название и размер
+const regex = /^(.+?)([\d.]+\s*\S+)\s+\((\d+)\)$/
+const torrents = []
+for (const line of lines) {
+    const match = line.match(regex)
+    const torrent = {
+        'Name': match[1],
+        'Size': match[2]
+    }
+    torrents.push(torrent)
+}
+console.log(JSON.stringify(torrents, null, 2))
+```
+
+Пример создания `API` для получения результатов проверки скорости интернета в формате `JSON` через [Ookla SpeedTest](https://www.speedtest.net).
+
+```js
+const puppeteer = require('puppeteer')
+const browser = await puppeteer.launch({
+    headless: false
+})
+const page = await browser.newPage()
+await page.goto(`https://www.speedtest.net`, {
+    waitUntil: 'domcontentloaded'
+})
+// Дождаться, когда кнопка "Go" станет доступной
+await page.waitForSelector('span[data-testid="start-button"]')
+// Возвращаем массив всех элементов span на странице с их текстом
+await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('span')).map(elemet => ({
+        Text: elemet.innerText, // Текст, отображаемый внутри элемента
+        Content: elemet.textContent, // Весь текст внутри элемента, включая скрытые части
+        // HTML: elemet.innerHTML, // HTML-код, который находится внутри элемента
+        // AllHTML: elemet.outerHTML , // Весь HTML-код, который находится внутри элемента
+        id: elemet.id, // Уникальный идентификатор элемента (#)
+        className: elemet.className,
+        tagName: elemet.tagName // Имя тега элемента (например, SPAN)
+    }))
+})
+// Находим и нажимаем на кнопку
+await page.evaluate(() => {
+    const buttons = document.querySelectorAll('span')
+    buttons.forEach(button => {
+        if (button.textContent.includes('Go') || button.innerText.includes('GO')) {
+            button.click()
+        }
+    })
+})
+// Функция для получения результата
+async function checkResult () {
+    return await page.evaluate(() => {
+        const element = document.querySelector('div.result-data a')
+        return element ? element.getAttribute('href') : null
+    })
+}
+// Цикл для проверки получения результата
+let resultUrl = '#'
+// Проверяем, что результат содержит в начале строки 'http'
+while (!resultUrl.startsWith('http')) {
+    resultUrl = await checkResult()
+}
+await browser.close()
+
+// Считываем данные из полученного url с помощью Fetch
+const result = await fetch(resultUrl)
+const resultHTML = await result.text()
+// Вытаскиваем JSON из HTML страницы
+const resultJSON = resultHTML.split('window.OOKLA')[3].replace('.INIT_DATA  = ','').replace(';\n','')
+const resultObj = JSON.parse(resultJSON)
+
+resultObj.result.id // 16947429430
+resultObj.result.download // 7169 (7.17)
+resultObj.result.upload // 4939 (4.94)
+resultObj.result.idle_latency // 171 (ping)
 ```
