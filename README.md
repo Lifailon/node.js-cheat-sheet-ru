@@ -4,19 +4,25 @@
     <a href="https://lifailon.github.io"><img title="Web version"src="https://img.shields.io/badge/web_version-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white"></a>
 </p>
 
-Репозиторий содержи **документацию** в примерах по основам синтаксиса `JavaScript/Node.js` на **русском языке**.
+Репозиторий содержи **документацию** в примерах по основам синтаксиса `JavaScript` и `Go` на **русском языке**.
 
-### Структура
+### Languages
 
 - [JavaScript (Node.js)](node.js.md)
+- [GoLang](golang.md)
 
-📚 Большая база заметок по синтаксису и командам **PowerShell** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
+📚 Большая база заметок по синтаксису **PowerShell**, а также по работе с системными командами и консольными утилитами 🐧 **Linux** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
 
 ### Backlog
 
 - `Python`
-- `GoLang`
 - `C#`
+- `Rust`
+- `Dart/Flutter`
+
+<!--
+- `PowerShell`
 - `Bash`
 - `Groovy`
-- `Dart/Flutter`
+- `VBScript`
+-->
