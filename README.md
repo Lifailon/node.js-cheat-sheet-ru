@@ -11,7 +11,7 @@
 - [JavaScript (Node.js)](node.js.md)
 - [GoLang](golang.md)
 
-📚 Большая база заметок по синтаксису **PowerShell**, а также по работе с системными командами и консольными утилитами 🐧 **Linux** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
+📚 Большая база заметок по синтаксису **PowerShell**, а также по системным командам и консольным утилитам 🐧 **Linux** доступны в репозитории [PS-Commands](https://github.com/Lifailon/PS-Commands).
 
 ### Backlog
 

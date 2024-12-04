@@ -36,6 +36,69 @@ func main() {
 }
 ```
 
+## Массивы и объекты
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    // Массив фиксированного размера с 5-ю элементами, все элементы инициализируются значением 0 (по умолчанию для типа int)
+    var arr [5]int
+    // Присвоить значения указанным элементам массива по индексу
+    arr[0] = 1
+    arr[1] = 2
+    fmt.Println("Array:", arr)
+    
+    // Слайсы (массивы переменной длины)
+    slice := []int{1, 2, 3, 4, 5}
+    // Добавить новое значение в массив с помощью функции append
+    slice = append(slice, 6)
+    // Удалить элемент с индексом 5
+    index := 5
+    // Создается 2 слайса с начала до указанного индекса и срез с следующего элемента после индекса (+1) до конца слайса
+    slice = append(slice[:index], slice[index+1:]...)
+    fmt.Println("Slice:", slice) // [1, 2, 3, 4, 6]
+    // Вывести срез слайсов по индексу с 1 и до 4 (по 3, не включая 4) элемент
+    fmt.Println(slice[1:4]) // [2, 3, 4]
+    // Очистить слайс (удалить все элементы)
+    slice = slice[:0] // []
+    fmt.Println(len(slice) == 0) // true
+    // Объединение двух слайсов
+    slice1 := []int{1, 2}
+    slice2 := []int{3, 4}
+    combined := append(slice1, slice2...)
+    fmt.Println(combined) // [1, 2, 3, 4]
+
+    // Слайс с заданной вместимостью:
+    makeSlice := make([]int, 5, 10)
+    fmt.Println(makeSlice) // [0 0 0 0 0]
+    fmt.Println(cap(makeSlice)) // 10
+
+    // Создаем пустую карту (map) с ключами типа string и значениями типа int
+    m := make(map[string]int)
+    m["Day"] = 30       // добавляем элемент с ключом "Day" и значением 30
+    m["Day"] = 31       // обновляем  значение для ключа
+    m["Month"] = 12
+    fmt.Println(m) // map[Day:31 Month:12]
+    // Создать карту с заданными значениями
+    m2 := map[string]int{
+        "Day": 31,
+        "Month": 12,
+    }
+    // Читаем значение
+    value := m2["Day"]
+    fmt.Println(value) // 31
+    // Если ключа нет в карте, то получаем нулевое значение для типа значения
+    value, exists := m["Year"]
+    fmt.Println(value, exists) // 0 false
+    // Удалить элемент
+    delete(m, "Day")
+    fmt.Println(m) // map[Month:12]
+}
+```
+
 ## Функции
 
 ```go
@@ -69,7 +132,7 @@ package main
 
 import "fmt"
 
-// Функция, возвращающая название месяца
+// Функция, возвращающая название месяца через условную конструкцию switch
 func getMonthName(month int) string {
     switch month {
     case 1:
@@ -101,6 +164,15 @@ func getMonthName(month int) string {
     }
 }
 
+// Второй вариант функции через классическое условие по индеку массива
+func getMonthName2(month int) string {
+    months := []string{"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
+    if month >= 1 && month <= 12 {
+        return months[month]
+    }
+    return "Invalid month"
+}
+
 func main() {
     // Классический цикл из 13-ти итераций
     for i := 1; i <= 13; i++ {
@@ -114,13 +186,8 @@ func main() {
         j++
     }
 
-    // Проходимся по всем элементам в массиве (range)
-    months := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-    for _, month := range months {
-        fmt.Printf("Month %d: %s\n", month, getMonthName(month))
-    }
-
     // Бесконечный цикл
+    months := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
     k := 0
     for {
         // Пропускаем итерацию, если 6-й месяц (5-й индекс)
@@ -134,6 +201,33 @@ func main() {
         }
         fmt.Printf("Month %d: %s\n", months[k], getMonthName(months[k]))
         k++
+    }
+
+    // Конструкция range используется для перебора всех элементов в коллекциях (массивы, слайсы, карты и каналы)
+    for index, month := range months {
+        fmt.Printf("Month %d: %s\n", month, getMonthName(month))
+    }
+
+    // Индекс может использоваться для карты (map) как ключ
+    m := map[string]int{"a": 1, "b": 2, "c": 3}
+    for index, value := range m {
+        fmt.Println("Key:", index, "Value:", value)
+    }
+
+    // Перебор строки по символам
+    s := "string"
+    for index, char := range s {
+        fmt.Println("Index:", index, "Char:", string(char))
+    }
+
+    // Перебор канала
+    ch := make(chan int, 3)
+    ch <- 1
+    ch <- 2
+    ch <- 3
+    close(ch)
+    for val := range ch {
+        fmt.Println(val)
     }
 }
 ```
@@ -165,18 +259,6 @@ func main() {
         fmt.Println("Result:", result)
     }
 }
-```
-
-## Массивы
-
-```go
-
-```
-
-## Объекты
-
-```go
-
 ```
 
 ## Асинхронные операции
