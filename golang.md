@@ -2,20 +2,32 @@
 
 ---
 
-Полезные ресурсы для изучения [Go](https://go.dev/learn) на русском языке:
+Подборка полезных и бесплатных ресурсов для изучения [Go](https://go.dev/learn) на русском языке:
 
-- [Эффективный Go](https://github.com/0x0FACED/effective-go-ru) - перевод официальной документации [Effective Go](https://go.dev/doc/effective_go) от сентября 2024 года.
-- [Эффективный Go](https://github.com/Konstantin8105/Effective_Go_RU) - перевод не завершен и устарел.
+- [Эффективный Go](https://github.com/Konstantin8105/Effective_Go_RU) - перевод официальной документации [Effective Go](https://go.dev/doc/effective_go) (не завершен и устарел).
+- [Эффективный Go](https://github.com/0x0FACED/effective-go-ru) - перевод от сентября 2024 года.
 - [Go в примерах](https://github.com/region23/gobyexample.ru) - исходный код для сборки статического сайта [Go в примерах](https://gobyexample.ru) (форк [gobyexample](https://github.com/mmcgrana/gobyexample)).
 - [Введение в программирование на Go](https://github.com/maxpoletaev/golang-book) ([веб-версия](http://golang-book.ru)) - перевод книги [An Introduction to Programming in Go](https://www.golang-book.com).
 - [Маленькая книга о Go](https://github.com/sefus/the-little-go-book/blob/master/ru/go.md) - перевод [The Little Go Book](https://github.com/karlseguin/the-little-go-book).
-- http://golang-book.ru
 - [Паттерны параллельного программирования Go](https://github.com/Konstantin8105/Go-pipelines).
-- [Гайды Uber по написанию кода на Go](https://github.com/sau00/uber-go-guide-ru) - русский перевод [оригинального репозитория](https://github.com/uber-go/guide).
-- [Разработка веб-сервисов на Golang](https://github.com/tyz910/golang-webservices?tab=readme-ov-file) - курс по Go от Mail.Ru на платформе Coursera.
-- [Бесплатный курс «Основы Go»](https://start.practicum.yandex/go-basics) от Яндекс Практикум
-- [Шпаргалка по Go](https://opensource.archium.org/index.php?title=Langauge_RU) - перевод с Немецкого языка.
+- [Курс по изучению Golang для начинающих](https://golangify.com/go/kurs-izucheniya-golang-dlya-nachinayuschih).
+- [Обучение программированию на языке Go](https://code-basics.com/ru/languages/go) в тренажере (онлайн компилятор).
+- [Руководство по языку Go](https://metanit.com/go/tutorial) от *Metanit*.
+- [Шпаргалка по Go](https://opensource.archium.org/index.php?title=Langauge_RU) (перевод с Немецкого языка).
 - [GUI на Golang на GTK+ 3](https://github.com/jhekasoft/articles/blob/master/01_golang_gtk3/main.md).
+- [Гайды Uber по написанию кода на Go](https://github.com/sau00/uber-go-guide-ru) - русский перевод [оригинального репозитория](https://github.com/uber-go/guide).
+- [Разработка веб-сервисов на Golang](https://github.com/tyz910/golang-webservices?tab=readme-ov-file) - курс по Go от *Mail.Ru* на платформе Coursera.
+- [Основы Go](https://start.practicum.yandex/go-basics) - бесплатный курс от *Яндекс Практикум*.
+- [Основы Go](https://ru.hexlet.io/courses/go-basics) - бесплатный курс от *Хек Слет* (34 урока, 97 тестов и 37 упражнений в тренажере).
+- Бесплатные курсы от *Stepik* с получением сертификата:
+- - [Go - первое знакомство](https://stepik.org/course/100208/promo) - 42 урока, 110 тестов, 45 задач (20к учащихся, рейтинг: 4.9).
+- - [PRO Go. Основы программирования](https://stepik.org/course/158385/promo) - 38 урока, 121 тестов, 191 задач (13к учащихся, рейтинг: 4.8).
+- - [Программирование на Golang](https://stepik.org/course/54403/promo) - 35 урока, 64 тестов, 94 задач (65к учащихся, рейтинг: 4.7).
+- Быстрые шпаргалки:
+- - [Go Cheat Sheets](https://cheatsheets.zip/go) от [Reference](https://github.com/Fechin/reference).
+- - [Go Cheat Sheets](https://devhints.io/go) от [Devhints](https://github.com/rstacruz/cheatsheets).
+- - [Изучите Go за Y минут](https://learnxinyminutes.com/docs/ru-ru/go-ru) от [Learn X in Y minutes](https://github.com/adambard/learnxinyminutes-docs).
+<!-- - - [Go Cheat Sheet Ru](https://github.com/Lifailon/golang-cheat-sheet-ru) - перевод оригинального [репозитория](https://github.com/a8m/golang-cheat-sheet) на русский язык. -->
 
 Вы можете использовать [онлайн компилятор](https://go.dev/play) на официальном сайте для запуска блоков кода, а также пройти [интерактивный тур](https://go.dev/tour/welcome/1).
 
@@ -31,6 +43,7 @@
 - [Горутины](#горутины)
 - [Каналы и селекторы](#каналы-и-селекторы)
 - [Регулярные выражения](#регулярные-выражения)
+- [Математические вычисления](#математические-вычисления)
 
 ---
 
@@ -546,6 +559,39 @@ func main() {
     for _, match := range matches {
         fmt.Printf("Логин: %s, Домен: %s\n", match[1], match[2])
     }
+}
+```
+
+### Математические вычисления
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func customCeil(numerator int, denominator int) int {
+    result := numerator / denominator
+    if numerator%denominator != 0 {
+        result++
+    }
+    return result
+}
+
+func main() {
+	fmt.Println("Возвращает наименьшее значение из двух чисел 9 и 10:", math.Min(9, 10)) // 9
+	fmt.Println("Возвращает наибольшее значение из двух чисел 9 и 10:", math.Max(9, 10)) // 10
+	fmt.Println("Округляет число в меньшую сторону 10 / 3:", math.Floor(10/3)) // 3
+    fmt.Println("Округляет число в большую сторону 10 / 3:", math.Ceil(10.0/3))
+    fmt.Println("Округляет число в большую сторону 10 / 3:", customCeil(10, 3)) // 4
+    fmt.Println("Отбрасывает дробную часть числа (не округляет) 4,9:", math.Trunc(4.9)) // 4
+	fmt.Println("Округляет число до ближайшего целого в большую сторону от 4,5:", math.Round(4.5)) // 5
+	fmt.Println("Округляет число до ближайшего целого в меньшую сторону от 4,5:", math.Round(4.45)) // 4
+	fmt.Println("Возвращает абсолютное значение числа -7:", math.Abs(-7)) // 7
+	fmt.Println("Возводит число 2 в степень 3:", math.Pow(2, 3)) // 8
+	fmt.Println("Вычисляет квадратный корень числа 16:", math.Sqrt(16)) // 4
 }
 ```
 
