@@ -7,6 +7,7 @@
 - [Эффективный Go](https://github.com/Konstantin8105/Effective_Go_RU) - перевод официальной документации [Effective Go](https://go.dev/doc/effective_go) (не завершен и устарел).
 - [Эффективный Go](https://github.com/0x0FACED/effective-go-ru) - перевод от сентября 2024 года.
 - [Go в примерах](https://github.com/region23/gobyexample.ru) - исходный код для сборки статического сайта [Go в примерах](https://gobyexample.ru) (форк [gobyexample](https://github.com/mmcgrana/gobyexample)).
+<!-- - [Go Cheat Sheet Ru](https://github.com/Lifailon/golang-cheat-sheet-ru) - перевод оригинального [репозитория](https://github.com/a8m/golang-cheat-sheet) на русский язык. -->
 - [Введение в программирование на Go](https://github.com/maxpoletaev/golang-book) ([веб-версия](http://golang-book.ru)) - перевод книги [An Introduction to Programming in Go](https://www.golang-book.com).
 - [Маленькая книга о Go](https://github.com/sefus/the-little-go-book/blob/master/ru/go.md) - перевод [The Little Go Book](https://github.com/karlseguin/the-little-go-book).
 - [Паттерны параллельного программирования Go](https://github.com/Konstantin8105/Go-pipelines).
@@ -24,10 +25,9 @@
 - - [PRO Go. Основы программирования](https://stepik.org/course/158385/promo) - 38 урока, 121 тестов, 191 задач (13к учащихся, рейтинг: 4.8).
 - - [Программирование на Golang](https://stepik.org/course/54403/promo) - 35 урока, 64 тестов, 94 задач (65к учащихся, рейтинг: 4.7).
 - Быстрые шпаргалки:
+- - [Изучите Go за Y минут](https://learnxinyminutes.com/docs/ru-ru/go-ru) от [Learn X in Y minutes](https://github.com/adambard/learnxinyminutes-docs).
 - - [Go Cheat Sheets](https://cheatsheets.zip/go) от [Reference](https://github.com/Fechin/reference).
 - - [Go Cheat Sheets](https://devhints.io/go) от [Devhints](https://github.com/rstacruz/cheatsheets).
-- - [Изучите Go за Y минут](https://learnxinyminutes.com/docs/ru-ru/go-ru) от [Learn X in Y minutes](https://github.com/adambard/learnxinyminutes-docs).
-<!-- - - [Go Cheat Sheet Ru](https://github.com/Lifailon/golang-cheat-sheet-ru) - перевод оригинального [репозитория](https://github.com/a8m/golang-cheat-sheet) на русский язык. -->
 
 Вы можете использовать [онлайн компилятор](https://go.dev/play) на официальном сайте для запуска блоков кода, а также пройти [интерактивный тур](https://go.dev/tour/welcome/1).
 
