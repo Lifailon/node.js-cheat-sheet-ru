@@ -44,6 +44,8 @@
 - [Каналы и селекторы](#каналы-и-селекторы)
 - [Регулярные выражения](#регулярные-выражения)
 - [Математические вычисления](#математические-вычисления)
+- [HTTP](#http)
+- [OS](#os)
 
 ---
 
@@ -595,3 +597,98 @@ func main() {
 }
 ```
 
+### HTTP
+
+HTTP запрос к GitHub API для получения последней версии релиза указаного репозитория.
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+// Структура для ответа от GitHub API
+type GitHubRelease struct {
+	TagName string `json:"tag_name"`
+}
+
+func main() {
+	// URL для получения информации о последней версии релиза
+    repos := "Lifailon/lazyjournal"
+	url := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", repos)
+	// Выполнение GET-запроса
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal("Ошибка при выполнении запроса:", err)
+	}
+	defer resp.Body.Close()
+	// Проверка на успешный ответ
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("Ошибка HTTP: %s", resp.Status)
+	}
+	// Декодирование JSON-ответа в заданную структуру
+	var release GitHubRelease
+	err = json.NewDecoder(resp.Body).Decode(&release)
+	if err != nil {
+		log.Fatal("Ошибка при декодировании JSON:", err)
+	}
+	// Вывод последней версии
+	fmt.Println("Latest version:", release.TagName)
+}
+```
+
+### OS
+
+Проверка доступности всех хостов в указанной подсети (асинхронный ICMP опрос).
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"strings"
+	"sync"
+)
+
+func pingHost(ip string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	// Запускаем команду ping
+	cmd := exec.Command("ping", "-n", "1", ip)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return
+	}
+	// Обрабатываем вывод команды
+	if strings.Contains(string(output), "TTL=") {
+		fmt.Printf("%s - доступен\n", ip)
+	}
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Использование: go run main.go <подсеть>")
+		return
+	}
+    // Извлекаем аргумент
+	subnet := os.Args[1]
+	// Убираем последний октет
+	ipBase := subnet[:len(subnet)-1]
+	var wg sync.WaitGroup
+	for i := 1; i <= 254; i++ {
+		ip := fmt.Sprintf("%s%d", ipBase, i)
+		wg.Add(1)
+		// Запускаем асинхронный пинг
+		go pingHost(ip, &wg)
+	}
+	// Ждем завершения всех горутин
+	wg.Wait()
+}
+```
+
+`go run main.go 192.168.3.0`
